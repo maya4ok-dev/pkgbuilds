@@ -7,29 +7,28 @@ url="https://github.com/waydroid/gbinder-python"
 depends=('libgbinder')
 conflicts=('python-gbinder')
 replaces=('python-gbinder')
-provides=('python-gbinder')
-makedepends=('python-build' 'cython' 'python-installer' 'python-wheel' 'python-setuptools' 'python-wheel' 'git')
-source=(git+${url}.git)
+provides=("python-gbinder=$pkgver")
+makedepends=('python-build' 'cython' 'python-installer' 'python-wheel' 'python-setuptools' 'git')
+source=("$pkgname::git+$url.git")
 sha256sums=('SKIP')
 
 pkgver() {
-    cd gbinder-python
+    cd "$srcdir/$pkgname"
     git describe --tags --abbrev=0 | sed 's/^v//'
 }
 
 prepare() {
-    cd gbinder-python
-    git -C "${srcdir}/gbinder-python" clean -dfx
+    cd "$srcdir/$pkgname"
     cython -a gbinder.pyx
 }
 
 build() {
-    cd gbinder-python
+    cd "$srcdir/$pkgname"
     python -m build --wheel --no-isolation
 }
 
 package() {
-    cd gbinder-python
+    cd "$srcdir/$pkgname"
     python -m installer --destdir="$pkgdir" dist/*.whl
-    install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/pytnon-gbinder/LICENSE"
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
